@@ -32,6 +32,7 @@ async function run() {
 
 
         const serviceCollection = client.db('toyMarket').collection('customers');
+        const addCollection = client.db('toyMarket').collection('sellers');
 
         app.get('/customers', async(req, res) => {
             const cursor = serviceCollection.find();
@@ -45,6 +46,30 @@ async function run() {
             const result = await serviceCollection.findOne(query);
             res.send(result);
         })
+
+        // app.get('/customers/:id', async(req, res) => {
+        //     const id = req.params.id;
+        //     const query = {_id: new ObjectId(id)}
+
+        //     const options = {
+                
+        //         // Include only the `title` and `imdb` fields in the returned document
+        //         projection: { _id: 1, availableQuantity: 1, description: 1, description: 1, email: 1, img: 1, price: 1, rating: 1, sellerName: 1, subCategory: 1, toyName: 1, },
+        //       };
+
+        //     const result = await serviceCollection.findOne(query, options);
+        //     res.send(result);
+        // })
+
+
+        // add toys
+        app.post('/sellers', async(req, res) => {
+            const seller = req.body;
+            console.log(seller);
+            const result = await addCollection.insertOne(seller);
+            res.send(result);
+        });
+
 
 
         // Send a ping to confirm a successful connection
