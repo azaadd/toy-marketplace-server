@@ -47,20 +47,6 @@ async function run() {
             res.send(result);
         })
 
-        // app.get('/customers/:id', async(req, res) => {
-        //     const id = req.params.id;
-        //     const query = {_id: new ObjectId(id)}
-
-        //     const options = {
-                
-        //         // Include only the `title` and `imdb` fields in the returned document
-        //         projection: { _id: 1, availableQuantity: 1, description: 1, description: 1, email: 1, img: 1, price: 1, rating: 1, sellerName: 1, subCategory: 1, toyName: 1, },
-        //       };
-
-        //     const result = await serviceCollection.findOne(query, options);
-        //     res.send(result);
-        // })
-
 
         // add toys
         app.get('/sellers', async(req, res) => {
@@ -69,8 +55,14 @@ async function run() {
             if(req.query?.email) {
                 query = { email: req.query.email}
             }
-
             const result = await addCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.get('/sellers/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await addCollection.findOne(query);
             res.send(result);
         })
 
@@ -81,6 +73,27 @@ async function run() {
             const result = await addCollection.insertOne(seller);
             res.send(result);
         });
+
+        app.put('/sellers/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)};
+            const options = {upsert: true};
+            const updatedToy = req.body;
+            const toy = {
+                $set: {
+                    rating: updatedToy.rating, 
+                    toyname: updatedToy.toyname, 
+                    photo: updatedToy.photo, 
+                    description: updatedToy.description, 
+                    quantity: updatedToy.quantity, 
+                    price: updatedToy.price, 
+                    category: updatedToy.category
+                }
+            }
+
+            const result = await addCollection.updateOne(filter, toy, options);
+            res.send(result);
+        })
 
 
         app.delete('/sellers/:id', async(req, res) => {
