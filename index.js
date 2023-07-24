@@ -35,10 +35,28 @@ async function run() {
         const addCollection = client.db('toyMarket').collection('sellers');
 
         app.get('/customers', async(req, res) => {
-            const cursor = serviceCollection.find();
+            console.log(req.query);
+            const page = parseInt(req.query.page);
+            const limit = parseInt(req.query.limit);
+            const skip = (page - 1) * limit;
+
+            const cursor = serviceCollection.find().skip(skip).limit(limit);
             const result = await cursor.toArray();
             res.send(result);
         })
+
+        // app.get('/customers', async(req, res) => {
+        //     const result = await serviceCollection.estimatedDocumentCount();
+        //     res.send({customers: result})
+        // })
+
+
+        //pagination
+        app.get('/totalProducts', async(req, res) => {
+            const result = await serviceCollection.estimatedDocumentCount();
+            res.send({totalProducts: result})
+        })
+
 
         app.get('/customers/:id', async(req, res) => {
             const id = req.params.id;
@@ -51,6 +69,7 @@ async function run() {
         // add toys
         app.get('/sellers', async(req, res) => {
             console.log(req.query.email);
+
             let query = {};
             if(req.query?.email) {
                 query = { email: req.query.email}
@@ -58,6 +77,8 @@ async function run() {
             const result = await addCollection.find(query).toArray();
             res.send(result);
         })
+        
+
 
         app.get('/sellers/:id', async(req, res) => {
             const id = req.params.id;
@@ -65,6 +86,7 @@ async function run() {
             const result = await addCollection.findOne(query);
             res.send(result);
         })
+
 
 
         app.post('/sellers', async(req, res) => {
