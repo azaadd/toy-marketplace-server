@@ -25,10 +25,10 @@ const client = new MongoClient(uri, {
     }
 });
 
-async function run() {
+async function run() {https://github.com/azaadd/toy-marketplace-server/blob/main/index.js
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        client.connect();
 
 
         const serviceCollection = client.db('toyMarket').collection('customers');
